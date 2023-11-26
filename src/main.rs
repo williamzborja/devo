@@ -58,7 +58,6 @@ fn read_config(filename: &str) -> Config {
     toml::from_str(&contents).expect("put a valid config file")
 }
 
-
 fn main() {
     let filename = "devo.toml";
     let config = read_config(&filename);

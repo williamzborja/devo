@@ -10,9 +10,10 @@ names = [
 	"cmake",
 	"tldr",
 	"thefuck",
-	#"lazygit",
-	#"lazydocker",
-	"httpie"
+	"httpie",
+  "libXft-devel",
+  "libX11-devel",
+  "libXinerama-devel"
 ]
 
 [cargo_install]
@@ -30,3 +31,13 @@ names = [
 	"bandwhich",
 	"macchina"
 ]
+
+[git]
+name='william'
+email='william@mail.com'
+
+[dotfile.neovim]
+name='neo'
+src='~/sergio/dotfile'
+github='sergioarg/dotfiles/nvim'
+dest='~/.config/nvim'
