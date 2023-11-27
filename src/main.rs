@@ -1,14 +1,18 @@
-use std::process::Command;
+mod config;
+mod git;
+
+use std::{process::Command, path::PathBuf};
 use std::fs;
+use git::git_config_global;
 use toml;
-use serde::{Deserialize, Serialize};
-use std::io::{self, Write};
+use config::Config;
 
 trait PackageManager{
     fn install(pgs:  &Vec<String>) -> Result<(), String>;
 }
 struct Dnf;
 struct Cargo;
+
 
 impl PackageManager for Dnf {
    fn install(pgs: &Vec<String>) -> Result<(), String> {
@@ -38,19 +42,11 @@ impl PackageManager for Cargo {
         Ok(())
    }
 }
-#[derive(Serialize, Deserialize, Debug)]
-struct Config {
-    packages: Packages,
-    cargo_install: Packages,
-}
 
-#[derive(Serialize, Deserialize, Debug)]
-struct Packages {
-    names: Vec<String> 
-}
-
-fn read_config(filename: &str) -> Config {
-    let contents = match fs::read_to_string(filename){
+fn read_config() -> Config {
+    let home_dir = std::env::var("HOME").expect("Home variable is required");
+    let config_file: PathBuf = [home_dir.as_str(), r".config/devo/devo.toml"].iter().collect();
+    let contents = match fs::read_to_string(config_file){
         Ok(c)=> c,
         Err(e)=> panic!("error: {}", e),
     };
@@ -59,8 +55,9 @@ fn read_config(filename: &str) -> Config {
 }
 
 fn main() {
-    let filename = "devo.toml";
-    let config = read_config(&filename);
+    let config = read_config();
+
+    git_config_global(&config.git);
     let _ = Dnf::install(&config.packages.names);
     let _ = Cargo::install(&config.cargo_install.names);
 }
